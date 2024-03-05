@@ -49,23 +49,22 @@ class Model_Reactionary_Detection:
     def preprocess_function(self,examples):
         return self.tokenizer(examples["text"], truncation=True)
     
-    def train_tt(self, learning_rate = 0.5, EPOCHS = 3, BS = 32):
+    def train_tt(self, learning_rate = 0.3, EPOCHS = 10, BS = 32):
         self.train_dataset = self.train_dataset.map(self.preprocess_function, batched=True)
         self.valid_dataset = self.valid_dataset.map(self.preprocess_function, batched=True)
         training_args = TrainingArguments(
             output_dir="./models",
             evaluation_strategy="epoch",
-            save_strategy="epoch",
+            save_strategy="no",
             per_device_train_batch_size=BS,
             per_device_eval_batch_size=BS,
             learning_rate=learning_rate,
             num_train_epochs=1,
             lr_scheduler_type='constant',
             logging_strategy = "no",
-            # logging_steps=25, #sau bao nhiêu step thì sẽ log lại lr, epochs, loss
             report_to=["tensorboard"],
-            # load_best_model_at_end=True,
-            # metric_for_best_model="accuracy"
+            load_best_model_at_end=False,
+            metric_for_best_model="accuracy"
         )
         trainer = Trainer(
             model = self.model,
@@ -77,11 +76,11 @@ class Model_Reactionary_Detection:
             compute_metrics = compute_metrics, # type: ignore
         )
         trainer.add_callback(CustomCallback(trainer))
-        for _ in range(EPOCHS):
+        for epoch in range(EPOCHS):
             trainer.train()
-            trainer.save_model(f"epoch_{_+1}")
+            trainer.save_model(f"./models/epoch_{epoch+1}")
             yield {
-                "epoch" : _ + 1,
+                "epoch" : epoch + 1,
                 "train_accuracy" : trainer.state.log_history[0]["train_accuracy"],
                 "train_loss": trainer.state.log_history[0]["train_loss"],
                 "eval_accuracy" : trainer.state.log_history[1]["eval_accuracy"],
