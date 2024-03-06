@@ -1,8 +1,7 @@
 from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer, AutoTokenizer, DataCollatorWithPadding, TrainerCallback
 import pandas as pd
 from datasets import Dataset
-import evaluate
-import numpy as np
+from utils import compute_metrics
 from copy import deepcopy
 
 def load_train_valid_dataset(train_data_dir,val_size):
@@ -14,14 +13,6 @@ def load_train_valid_dataset(train_data_dir,val_size):
     train_dataset = Dataset.from_pandas(df_train)
     valid_dataset = Dataset.from_pandas(df_valid)
     return train_dataset, valid_dataset
-
-
-accuracy = evaluate.load("accuracy")
-
-def compute_metrics(eval_pred):
-    predictions, labels = eval_pred
-    predictions = np.argmax(predictions, axis=1)
-    return accuracy.compute(predictions=predictions, references=labels)
 
 class CustomCallback(TrainerCallback):
     def __init__(self, trainer) -> None:
@@ -35,25 +26,28 @@ class CustomCallback(TrainerCallback):
             return control_copy
     
 class Model_Reactionary_Detection:
-    def __init__(self, model_name = 'distilbert-base-uncased', train_data_dir = "./datasets/train.csv", val_size = 0.1):
+    def __init__(self, labId="reactionary_detection", model_name = 'distilbert-base-uncased', train_data_dir = "./datasets/train.csv", val_size = 0.1):
         
         self.id2label = {0: "NEGATIVE", 1: "POSITIVE"}
         self.label2id = {"NEGATIVE": 0, "POSITIVE": 1}
+        self.labId = labId
+        self.model_name = model_name
         self.model = AutoModelForSequenceClassification.from_pretrained(
             model_name, num_labels=2, id2label=self.id2label, label2id=self.label2id
         )
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.train_dataset, self.valid_dataset = load_train_valid_dataset(train_data_dir,val_size)
         self.data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
+
     
-    def preprocess_function(self,examples):
+    def preprocess_function(self, examples):
         return self.tokenizer(examples["text"], truncation=True)
     
-    def train_tt(self, learning_rate = 0.3, EPOCHS = 10, BS = 32):
+    def train(self, learning_rate = 0.5, EPOCHS = 3, BS = 32):
         self.train_dataset = self.train_dataset.map(self.preprocess_function, batched=True)
         self.valid_dataset = self.valid_dataset.map(self.preprocess_function, batched=True)
         training_args = TrainingArguments(
-            output_dir="./models",
+            output_dir=f"./modelDir/{self.labId}/log_train/{self.model_name}",
             evaluation_strategy="epoch",
             save_strategy="no",
             per_device_train_batch_size=BS,
@@ -62,9 +56,10 @@ class Model_Reactionary_Detection:
             num_train_epochs=1,
             lr_scheduler_type='constant',
             logging_strategy = "no",
+            # logging_steps=25, #sau bao nhiêu step thì sẽ log lại lr, epochs, loss
             report_to=["tensorboard"],
-            load_best_model_at_end=False,
-            metric_for_best_model="accuracy"
+            # load_best_model_at_end=True,
+            # metric_for_best_model="accuracy"
         )
         trainer = Trainer(
             model = self.model,
@@ -76,21 +71,21 @@ class Model_Reactionary_Detection:
             compute_metrics = compute_metrics, # type: ignore
         )
         trainer.add_callback(CustomCallback(trainer))
-        for epoch in range(EPOCHS):
+        for _ in range(EPOCHS):
             trainer.train()
-            trainer.save_model(f"./models/epoch_{epoch+1}")
+            trainer.save_model(f"./modelDir/{self.labId}/log_train/{self.model_name}/ckpt-{_+1}")
             yield {
-                "epoch" : epoch + 1,
+                "epoch" : _ + 1,
                 "train_accuracy" : trainer.state.log_history[0]["train_accuracy"],
                 "train_loss": trainer.state.log_history[0]["train_loss"],
                 "eval_accuracy" : trainer.state.log_history[1]["eval_accuracy"],
                 "eval_loss": trainer.state.log_history[1]["eval_loss"]
             }
             
-if __name__ == "__main__":
-    model = Model_Reactionary_Detection()
-    results = []
-    results_generator = model.train_tt()
-    for result in results_generator:
-        results.append(result)
-    print(results)
+# if __name__ == "__main__":
+#     model = Model_Reactionary_Detection()
+#     results = []
+#     results_generator = model.train()
+#     for result in results_generator:
+#         results.append(result)
+#     print(results)
