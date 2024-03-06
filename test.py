@@ -23,8 +23,8 @@ def test(test_data_dir = './datasets/test.csv',labId = "reactionary_detection", 
     else:
         ckpt_path =  os.path.join (model_dir, 'ckpt-'+str (ckpt_number))
       
-    model = AutoModelForSequenceClassification.from_pretrained("/mnt/wsl/PHYSICALDRIVE0p1/toan/PVA/Textreactionary/modelDir/reactionary_detection/log_train/distilbert-base-uncased/ckpt-1")
-    tokenizer = AutoTokenizer.from_pretrained("/mnt/wsl/PHYSICALDRIVE0p1/toan/PVA/Textreactionary/modelDir/reactionary_detection/log_train/distilbert-base-uncased/ckpt-1")
+    model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
+    tokenizer = AutoTokenizer.from_pretrained(ckpt_path)
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     
     def preprocess_function(examples):
@@ -46,6 +46,6 @@ def test(test_data_dir = './datasets/test.csv',labId = "reactionary_detection", 
     }
 
 if __name__ == "__main__":
-    print(test(ckpt_number=1))
-    print(test(ckpt_number=2))
-    print(test(ckpt_number=3))
+    for i in range(10):
+        idx = i+1
+        print(test(ckpt_number=idx))
