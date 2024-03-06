@@ -1,9 +1,20 @@
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers import pipeline
 import os
+from utils import preprocessing_text
 
+def infer(text:str = '',labId:str = "reactionary_detection", ckpt_number:int = 1, model_name:str = "distilbert-base-uncased", sample_model_dir:str = ''):
+    """
+    Thực hiện Infer một đoạn text
+    Parameters
+    ----------
+    text : str, optional, default: '' , Đoạn text cần Infer
+    labId : str, optional, default: 'reactionary_detection' , Id của bài Lab
+    ckpt_number : int, optional, default: 1 , Số hiệu của check point
+    model_name : str, optional, default: 'distilbert-base-uncased' , Tên của mô hình sử dụng để huấn luyện
+    sample_model_dir : str, optional, default: '' , Đường dẫn tới check-point thực hiện Infer
 
-def infer(text = '',labId = "reactionary_detection", ckpt_number = 1, model_name = "distilbert-base-uncased",sample_model_dir = ''):
+    """
 
     #Load Model
     if sample_model_dir:
@@ -19,7 +30,14 @@ def infer(text = '',labId = "reactionary_detection", ckpt_number = 1, model_name
     tokenizer = AutoTokenizer.from_pretrained(ckpt_path)
     model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
     classifier = pipeline(task = 'text-classification', model = model,tokenizer = tokenizer)
-    return classifier(text)
+    text = preprocessing_text(text)
+    result = classifier(text)
+    return {
+        'label': result[0]['label'],
+        'score': result[0]['score'],
+        'text': text,
+        'model_checkpoint_number': ckpt_number or 'Invalid'
+    }
 
 if __name__ == "__main__":
     print(infer("Đù má mày chúng mày muốn chết à ??"))
