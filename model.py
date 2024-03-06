@@ -39,19 +39,19 @@ class CustomCallback(TrainerCallback):
             return control_copy
     
 class Model_Reactionary_Detection:
-    def __init__(self, labId:str = "reactionary_detection", model_name:str = 'distilbert-base-uncased', train_data_dir:str = "./datasets/train.csv", val_size:float = 0.1):
+    def __init__(self, labId:str = "reactionary_detection", model_name:str = 'google-bert/bert-base-multilingual-uncased', train_data_dir:str = "./datasets/train.csv", val_size:float = 0.1):
         """
         Parameters
         ----------
-        labId : str, optional, default: 'reactionary_detection' , Nhãn của bài Lab
-        model_name : str, optional, default: 'distilbert-base-uncased' , Tên của mô hình cần Fine-tune
-        train_data_dir : str, optional, default: './datasets/train.csv' , Đường dẫn tới file Train.csv
-        val_size : float, optional, default: 0.1 , Tỷ lệ tập Valid
+        labId : str, require, default: 'reactionary_detection' , Nhãn của bài Lab
+        model_name : str, require, default: 'google-bert/bert-base-multilingual-uncased' , Tên của mô hình cần Fine-tune có thể sử dụng các mô hình có sẵn trên Hugging face khác như: vinai/phobert-base, FacebookAI/xlm-roberta-base, ...
+        train_data_dir : str, require, default: './datasets/train.csv' , Đường dẫn tới file Train.csv
+        val_size : float, require, default: 0.1 , Tỷ lệ tập Valid
 
         """
         
-        self.id2label = {0: "NEGATIVE", 1: "POSITIVE"}
-        self.label2id = {"NEGATIVE": 0, "POSITIVE": 1}
+        self.id2label = {0: "normal", 1: "reactionary"}
+        self.label2id = {"normal": 0, "reactionary": 1}
         self.labId = labId
         self.model_name = model_name
         self.model = AutoModelForSequenceClassification.from_pretrained(
@@ -73,9 +73,9 @@ class Model_Reactionary_Detection:
         Mô hình thực thi huyến luyện
         Parameters
         ----------
-        learning_rate : float, optional, default: 1e-05 , Learning reate
-        EPOCHS : int, optional, default: 10 , Số epochs huấn luyện
-        BS : int, optional, default: 16 ,  Độ lớn của Batch Size
+        learning_rate : float, require, default: 1e-05 , Learning reate
+        EPOCHS : int, require, default: 10 , Số epochs huấn luyện
+        BS : int, require, default: 16 ,  Độ lớn của Batch Size
 
         """
         self.train_dataset = self.train_dataset.map(self.preprocess_function, batched=True)
@@ -90,10 +90,7 @@ class Model_Reactionary_Detection:
             num_train_epochs=1,
             lr_scheduler_type='constant',
             logging_strategy = "no",
-            # logging_steps=25, #sau bao nhiêu step thì sẽ log lại lr, epochs, loss
             report_to=["tensorboard"],
-            # load_best_model_at_end=True,
-            # metric_for_best_model="accuracy"
         )
         trainer = Trainer(
             model = self.model,
@@ -107,13 +104,16 @@ class Model_Reactionary_Detection:
         trainer.add_callback(CustomCallback(trainer))
         for _ in range(EPOCHS):
             trainer.train()
+            print(trainer.state.log_history)
             trainer.save_model(f"./modelDir/{self.labId}/log_train/{self.model_name}/ckpt-{_+1}")
             yield {
                 "epoch" : _ + 1,
                 "train_accuracy" : trainer.state.log_history[0]["train_accuracy"],
+                "train_f1_score": trainer.state.log_history[0]["train_f1_score"],
                 "train_loss": trainer.state.log_history[0]["train_loss"],
                 "eval_accuracy" : trainer.state.log_history[1]["eval_accuracy"],
-                "eval_loss": trainer.state.log_history[1]["eval_loss"]
+                "eval_loss": trainer.state.log_history[1]["eval_loss"],
+                "eval_f1_score": trainer.state.log_history[1]["eval_f1_score"]
             }
             
 # if __name__ == "__main__":

@@ -3,16 +3,16 @@ from transformers import pipeline
 import os
 from utils import preprocessing_text
 
-def infer(text:str = '',labId:str = "reactionary_detection", ckpt_number:int = 1, model_name:str = "distilbert-base-uncased", sample_model_dir:str = ''):
+async def infer(text:str = '',labId:str = "reactionary_detection", ckpt_number:int = 1, model_name:str = "distilbert-base-uncased", sample_model_dir:str = ''):
     """
-    Thực hiện Infer một đoạn text
+    Thực hiện Infer một đoạn text với mô hình đã chọn
     Parameters
     ----------
-    text : str, optional, default: '' , Đoạn text cần Infer
-    labId : str, optional, default: 'reactionary_detection' , Id của bài Lab
-    ckpt_number : int, optional, default: 1 , Số hiệu của check point
-    model_name : str, optional, default: 'distilbert-base-uncased' , Tên của mô hình sử dụng để huấn luyện
-    sample_model_dir : str, optional, default: '' , Đường dẫn tới check-point thực hiện Infer
+    text : str, require, default: '' , Đoạn text cần Infer
+    labId : str, require, default: 'reactionary_detection' , Id của bài Lab
+    ckpt_number : int, require, default: 1 , Số hiệu của check point
+    model_name : str, require, default: 'distilbert-base-uncased' , Tên của mô hình sử dụng để huấn luyện
+    sample_model_dir : str, require, default: '' , Đường dẫn tới check-point thực hiện Infer
 
     """
 
@@ -39,5 +39,5 @@ def infer(text:str = '',labId:str = "reactionary_detection", ckpt_number:int = 1
         'model_checkpoint_number': ckpt_number or 'Invalid'
     }
 
-if __name__ == "__main__":
-    print(infer("Đù má mày chúng mày muốn chết à ??"))
+# if __name__ == "__main__":
+#     print(infer("Đù má mày chúng mày muốn chết à ??"))

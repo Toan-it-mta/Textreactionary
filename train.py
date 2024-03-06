@@ -1,17 +1,17 @@
 from model import Model_Reactionary_Detection
 
-def train(labId:str = "reactionary_detection", model_name:str = 'distilbert-base-uncased', train_data_dir:str = "./datasets/val.csv", val_size:float = 0.1,
+async def train(labId:str = "reactionary_detection", model_name:str = 'google-bert/bert-base-multilingual-uncased', train_data_dir:str = "./datasets/val.csv", val_size:float = 0.1,
                 learning_rate:float = 1e-5, epochs:int = 3, batch_size:int = 16):
     """
     Parameters
     ----------
-    labId : str, optional, default: 'reactionary_detection' , Nhãn của bài Lab
-    model_name : str, optional, default: 'distilbert-base-uncased' , Tên của mô hình cần Fine-tune
-    train_data_dir : str, optional, default: './datasets/train.csv' , Đường dẫn tới file Train.csv
-    val_size : float, optional, default: 0.1 , Tỷ lệ tập Valid
-    learning_rate : float, optional, default: 1e-05 , Learning reate
-    epochs : int, optional, default: 3 , Số lượng epochs cần huấn luyện
-    batch_size : int, optional, default: 16 , Độ lớn của Batch Size
+    labId : str, require, default: 'reactionary_detection' , Nhãn của bài Lab
+    model_name : str, require, default: 'google-bert/bert-base-multilingual-uncased' , Tên của mô hình cần Fine-tune có thể sử dụng các mô hình có sẵn trên Hugging face khác như: vinai/phobert-base, FacebookAI/xlm-roberta-base, ...
+    train_data_dir : str, require, default: './datasets/train.csv' , Đường dẫn tới file Train.csv
+    val_size : float, require, default: 0.1 , Tỷ lệ tập Valid
+    learning_rate : float, require, default: 1e-05 , Learning reate
+    epochs : int, require, default: 3 , Số lượng epochs cần huấn luyện
+    batch_size : int, require, default: 16 , Độ lớn của Batch Size
 
     """
     
@@ -20,7 +20,7 @@ def train(labId:str = "reactionary_detection", model_name:str = 'distilbert-base
     for res_per_epoch in train_output:
 	    yield res_per_epoch
     
-if __name__ == '__main__':
-    respones = train()
-    for res in respones:
-        print(res)
+# if __name__ == '__main__':
+#     respones = train()
+#     for res in respones:
+#         print(res)

@@ -5,7 +5,7 @@ from utils import compute_metrics, preprocessing_text
 import os
 
 
-def test(test_data_dir:str = './datasets/test.csv', labId:str = "reactionary_detection", ckpt_number:int = 1, model_name:str = "distilbert-base-uncased", sample_model_dir:str = ''):
+async def test(test_data_dir:str = './datasets/test.csv', labId:str = "reactionary_detection", ckpt_number:int = 1, model_name:str = "google-bert/bert-base-multilingual-uncased", sample_model_dir:str = ''):
     """
     Thực hiện Test mô hình
     Parameters
@@ -13,8 +13,8 @@ def test(test_data_dir:str = './datasets/test.csv', labId:str = "reactionary_det
     test_data_dir : str, optional, default: './datasets/test.csv' , Đường dẫn tới file chứa tập test (test.csv)
     labId : str, optional, default: 'reactionary_detection' , Id của bài Lab
     ckpt_number : int, optional, default: 1 , Số hiệu của check point
-    model_name : str, optional, default: 'distilbert-base-uncased' , Tên của mô hình sử dụng để huấn luyện
- 
+    model_name : str, require, default: 'google-bert/bert-base-multilingual-uncased' , Tên của mô hình cần Fine-tune có thể sử dụng các mô hình có sẵn trên Hugging face khác như: vinai/phobert-base, FacebookAI/xlm-roberta-base, ...
+    sample_model_dir : str, require, default: '' , Đường dẫn tới check-point thực hiện Infer
     """
     
     # Load test dataset
@@ -53,11 +53,12 @@ def test(test_data_dir:str = './datasets/test.csv', labId:str = "reactionary_det
     result = trainer.evaluate()
     return {
         'test_acc': result['eval_accuracy'],
+        'test_f1_score': result['eval_f1_score'],
         'test_loss': result["eval_loss"],
         'model_checkpoint_number': ckpt_number or "Invalid"
     }
 
 # if __name__ == "__main__":
-#     for i in range(10):
+#     for i in range(2):
 #         idx = i+1
 #         print(test(ckpt_number=idx))

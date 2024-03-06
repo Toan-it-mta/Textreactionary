@@ -15,7 +15,7 @@ def compute_metrics_f_score(eval_pred):
     predictions, labels = eval_pred
     predictions = np.argmax(predictions, axis=1)
     score = f1_score(labels,predictions, average='macro')
-    return {"f1-score": float(score)}
+    return {"f1_score": float(score)}
 
 def compute_metrics(eval_pred):
     # Tính toán và trả về độ đo hiệu suất từ nhiều hàm tính toán độ đo riêng lẻ
