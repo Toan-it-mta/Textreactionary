@@ -1,6 +1,6 @@
 from model import Model_Reactionary_Detection
 
-async def train(labId:str = "reactionary_detection", model_name:str = 'google-bert/bert-base-multilingual-uncased', train_data_dir:str = "./datasets/val.csv", val_size:float = 0.1,
+async def train(labId:str = "reactionary_detection", model_name:str = 'google-bert/bert-base-multilingual-uncased', train_data_dir:str = "./datasets/train.csv", val_size:float = 0.2,
                 learning_rate:float = 1e-5, epochs:int = 3, batch_size:int = 16):
     """
     Parameters

@@ -15,7 +15,6 @@ def load_train_valid_dataset(train_data_dir:str, val_size:float):
     """
     df = pd.read_csv(train_data_dir)
     df = df[df['text'].notna()]
-    del df['dataset']
     df_valid = df.sample(frac=val_size)
     df_valid['text'] = df_valid['text'].apply(preprocessing_text)
     df_train = df.drop(df_valid.index)
