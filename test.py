@@ -21,7 +21,7 @@ async def test(test_data_dir:str = './datasets/test.csv', labId:str = "reactiona
     df = pd.read_csv(test_data_dir)
     df = df[df['text'].notna()]
     df['text'] = df['text'].apply(preprocessing_text)
-    del df['dataset']
+    # del df['dataset']
     test_dataset = Dataset.from_pandas(df)
 
     #Load Model
@@ -59,6 +59,6 @@ async def test(test_data_dir:str = './datasets/test.csv', labId:str = "reactiona
     }
 
 # if __name__ == "__main__":
-#     for i in range(2):
+#     for i in range(10):
 #         idx = i+1
-#         print(test(ckpt_number=idx))
+#         print(test(model_name="FacebookAI/xlm-roberta-base", ckpt_number=idx))

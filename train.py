@@ -21,6 +21,6 @@ async def train(labId:str = "reactionary_detection", model_name:str = 'google-be
 	    yield res_per_epoch
     
 # if __name__ == '__main__':
-#     respones = train()
+#     respones = train(model_name="FacebookAI/xlm-roberta-base", epochs=10)
 #     for res in respones:
 #         print(res)

@@ -3,7 +3,7 @@ from transformers import pipeline
 import os
 from utils import preprocessing_text
 
-async def infer(text:str = '',labId:str = "reactionary_detection", ckpt_number:int = 1, model_name:str = "distilbert-base-uncased", sample_model_dir:str = ''):
+async def infer(text:str = '',labId:str = "reactionary_detection", ckpt_number:int = 1, model_name:str = "google-bert/bert-base-multilingual-uncased", sample_model_dir:str = ''):
     """
     Thực hiện Infer một đoạn text với mô hình đã chọn
     Parameters

@@ -103,7 +103,6 @@ class Model_Reactionary_Detection:
         trainer.add_callback(CustomCallback(trainer))
         for _ in range(EPOCHS):
             trainer.train()
-            print(trainer.state.log_history)
             trainer.save_model(f"./modelDir/{self.labId}/log_train/{self.model_name}/ckpt-{_+1}")
             yield {
                 "epoch" : _ + 1,
@@ -116,9 +115,9 @@ class Model_Reactionary_Detection:
             }
             
 # if __name__ == "__main__":
-#     model = Model_Reactionary_Detection()
+#     model = Model_Reactionary_Detection(model_name="FacebookAI/xlm-roberta-base")
 #     results = []
-#     results_generator = model.train()
+#     results_generator = model.train(EPOCHS=10)
 #     for result in results_generator:
 #         results.append(result)
 #     print(results)
