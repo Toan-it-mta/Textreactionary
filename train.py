@@ -1,11 +1,13 @@
-from model import Model_Reactionary_Detection
+from model_text_classification import Model_Text_Classification
+from model_asr import Model_ASR
+from utils import processing_dataset, load_train_valid_dataset
 
-async def train(labId:str = "reactionary_detection", model_name:str = 'google-bert/bert-base-multilingual-uncased', train_data_dir:str = "./datasets/train.csv", val_size:float = 0.2,
-                learning_rate:float = 1e-5, epochs:int = 3, batch_size:int = 16):
+async def train(labId:str = "video_reactionary_detection", model_name:str = 'google-bert/bert-base-multilingual-uncased', path_train_data:str = "./datasets/train.csv", val_size:float = 0.1,
+                learning_rate:float = 2e-4, epochs:int = 3, batch_size:int = 16):
     """
     Parameters
     ----------
-    labId : str, require, default: 'reactionary_detection' , Nhãn của bài Lab
+    labId : str, require, default: 'video_reactionary_detection' , Nhãn của bài Lab
     model_name : str, require, default: 'google-bert/bert-base-multilingual-uncased' , Tên của mô hình cần Fine-tune có thể sử dụng các mô hình có sẵn trên Hugging face khác như: vinai/phobert-base, FacebookAI/xlm-roberta-base, ...
     train_data_dir : str, require, default: './datasets/train.csv' , Đường dẫn tới file Train.csv
     val_size : float, require, default: 0.1 , Tỷ lệ tập Valid
@@ -14,9 +16,11 @@ async def train(labId:str = "reactionary_detection", model_name:str = 'google-be
     batch_size : int, require, default: 16 , Độ lớn của Batch Size
 
     """
-    
-    model = Model_Reactionary_Detection(labId=labId, model_name=model_name, train_data_dir=train_data_dir,val_size=val_size)
-    train_output = model.train(learning_rate=learning_rate,EPOCHS=epochs, BS=batch_size)
+    model_asr = Model_ASR()
+    processing_dataset(path_train_data, model_asr)
+    train_dataset, valid_dataset = load_train_valid_dataset(path_train_data, val_size)
+    model_text_classification = Model_Text_Classification(labId=labId, model_name=model_name, train_dataset=train_dataset, valid_dataset=valid_dataset)
+    train_output = model_text_classification.train(learning_rate=learning_rate,EPOCHS=epochs, BS=batch_size)
     for res_per_epoch in train_output:
 	    yield res_per_epoch
     
