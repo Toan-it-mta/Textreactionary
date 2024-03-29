@@ -30,8 +30,8 @@ class Model_Text_Classification:
 
         """
         
-        self.id2label = {0: "normal", 1: "malicious"}
-        self.label2id = {"normal": 0, "malicious": 1}
+        self.id2label = {0: "normal", 1: "reactionary"}
+        self.label2id = {"normal": 0, "reactionary": 1}
         self.labId = labId
         self.model_name = model_name
         self.model = AutoModelForSequenceClassification.from_pretrained(

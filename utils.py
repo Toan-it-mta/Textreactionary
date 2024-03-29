@@ -63,5 +63,3 @@ def processing_dataset(path_dataset_csv:str, model_asr: Model_ASR):
     df = pd.read_csv(path_dataset_csv)
     df['text'] = df['path'].apply(lambda x: get_text_from_file_mp3(x, model_asr))
     df.to_csv(path_dataset_csv, index=False)
-
-    
