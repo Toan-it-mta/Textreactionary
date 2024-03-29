@@ -25,9 +25,8 @@ class Model_Text_Classification:
         ----------
         labId : str, require, default: 'video_reactionary_detection' , Nhãn của bài Lab
         model_name : str, require, default: 'google-bert/bert-base-multilingual-uncased' , Tên của mô hình cần Fine-tune có thể sử dụng các mô hình có sẵn trên Hugging face khác như: vinai/phobert-base, FacebookAI/xlm-roberta-base, ...
-        train_data_dir : str, require, default: './datasets/train.csv' , Đường dẫn tới file Train.csv
-        val_size : float, require, default: 0.1 , Tỷ lệ tập Valid
-
+        train_dataset : Dataset, require
+        valid_dataset : Dataset, require
         """
         
         self.id2label = {0: "normal", 1: "reactionary"}

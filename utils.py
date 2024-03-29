@@ -55,8 +55,8 @@ def load_train_valid_dataset(path_train_data:str, val_size:float):
     valid_dataset = Dataset.from_pandas(df_valid)
     return train_dataset, valid_dataset
                 
-def get_text_from_file_mp3(path_file_mp4:str, model_asr: Model_ASR):
-    text = model_asr.infer(os.path.join("./datasets",path_file_mp4))
+def get_text_from_file_mp3(path_file_mp3:str, model_asr: Model_ASR):
+    text = model_asr.infer(os.path.join("./datasets",path_file_mp3))
     return text
 
 def processing_dataset(path_dataset_csv:str, model_asr: Model_ASR):

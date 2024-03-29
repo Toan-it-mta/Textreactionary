@@ -4,7 +4,7 @@ import os
 from model_asr import Model_ASR
 from model_asr import Model_ASR
 
-async def infer(path_audio:str = '',labId:str = "video_reactionary_detection", ckpt_number:int = 1, model_name:str = "google-bert/bert-base-multilingual-uncased", sample_model_dir:str = ''):
+async def infer (path_audio:str = '',labId:str = "video_reactionary_detection", ckpt_number:int = 1, model_name:str = "google-bert/bert-base-multilingual-uncased", sample_model_dir:str = ''):
     """
     Thực hiện Infer một đoạn audio với mô hình đã chọn
     Parameters
