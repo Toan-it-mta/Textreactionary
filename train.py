@@ -16,12 +16,7 @@ async def train(labId:str = "video_reactionary_detection", model_name:str = 'goo
     batch_size : int, require, default: 16 , Độ lớn của Batch Size
 
     """
-    model_asr = Model_ASR()
-    processing_dataset(path_train_data, model_asr)
-    model_asr.model.to('cpu')
-    del model_asr
-    torch.cuda.empty_cache()
-    gc.collect()
+    processing_dataset(path_train_data)
     train_dataset, valid_dataset = load_train_valid_dataset(path_train_data, val_size)
     model_text_classification = Model_Text_Classification(labId=labId, model_name=model_name, train_dataset=train_dataset, valid_dataset=valid_dataset)
     train_output = model_text_classification.train(learning_rate=learning_rate,EPOCHS=epochs, BS=batch_size)
