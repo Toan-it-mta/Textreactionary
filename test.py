@@ -16,8 +16,7 @@ async def test(path_test_data:str = './datasets/test.csv', labId:str = "video_re
     model_name : str, require, default: 'google-bert/bert-base-multilingual-uncased' , Tên của mô hình cần Fine-tune có thể sử dụng các mô hình có sẵn trên Hugging face khác như: vinai/phobert-base, FacebookAI/xlm-roberta-base, ...
     sample_model_dir : str, require, default: '' , Đường dẫn tới check-point thực hiện Infer
     """
-    model_asr = Model_ASR()
-    processing_dataset(path_test_data, model_asr)
+    processing_dataset(path_test_data)
     # Load test dataset
     df = pd.read_csv(path_test_data)
     df = df[df['text'].notna()]

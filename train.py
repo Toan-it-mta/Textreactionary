@@ -24,6 +24,6 @@ async def train(labId:str = "video_reactionary_detection", model_name:str = 'goo
 	    yield res_per_epoch
     
 # if __name__ == '__main__':
-#     respones = train(model_name="FacebookAI/xlm-roberta-base", epochs=10)
+#     respones = train(model_name="FacebookAI/xlm-roberta-base", epochs=3)
 #     for res in respones:
 #         print(res)

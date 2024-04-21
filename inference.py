@@ -2,7 +2,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from transformers import pipeline
 import os
 from model_asr import Model_ASR
-from model_asr import Model_ASR
+from utils import preprocessing_text
 
 async def infer (path_audio:str = '',labId:str = "video_reactionary_detection", ckpt_number:int = 1, model_name:str = "google-bert/bert-base-multilingual-uncased", sample_model_dir:str = ''):
     """
@@ -33,7 +33,6 @@ async def infer (path_audio:str = '',labId:str = "video_reactionary_detection", 
     tokenizer = AutoTokenizer.from_pretrained(ckpt_path)
     model = AutoModelForSequenceClassification.from_pretrained(ckpt_path)
     classifier = pipeline(task = 'text-classification', model = model,tokenizer = tokenizer)
-    text = preprocessing_text(text)
     result = classifier(text)
     return {
         'label': result[0]['label'],
