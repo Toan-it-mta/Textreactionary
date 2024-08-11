@@ -4,6 +4,8 @@ from datasets import Dataset
 from utils import compute_metrics, preprocessing_text, processing_dataset
 import os
 from model_asr import Model_ASR
+import numpy as np
+import json
 
 async def test(path_test_data:str = './datasets/test.csv', labId:str = "video_reactionary_detection", ckpt_number:int = 1, model_name:str = "google-bert/bert-base-multilingual-uncased", sample_model_dir:str = ''):
     """
@@ -51,11 +53,15 @@ async def test(path_test_data:str = './datasets/test.csv', labId:str = "video_re
         compute_metrics = compute_metrics, # type: ignore
     )
     result = trainer.evaluate()
+    predictions = trainer.predict(test_dataset)
+    predicted_labels = np.argmax(predictions.predictions, axis=1)
+    df['predicts'] = predicted_labels
     return {
         'test_acc': result['eval_accuracy'],
         'test_f1_score': result['eval_f1_score'],
         'test_loss': result["eval_loss"],
-        'model_checkpoint_number': ckpt_number or "Invalid"
+        'model_checkpoint_number': ckpt_number or "Invalid",
+        'test_result': json.loads(df.to_json(orient="records"))
     }
 
 # if __name__ == "__main__":

@@ -82,7 +82,8 @@ class Model_Text_Classification:
         trainer.add_callback(CustomCallback(trainer))
         for _ in range(EPOCHS):
             trainer.train()
-            trainer.save_model(f"./modelDir/{self.labId}/log_train/{self.model_name}/ckpt-{_+1}")
+            model_path = f"./modelDir/{self.labId}/log_train/{self.model_name}/ckpt-{_+1}"
+            trainer.save_model(model_path)
             yield {
                 "epoch" : _ + 1,
                 "train_accuracy" : trainer.state.log_history[0]["train_accuracy"],
@@ -90,7 +91,8 @@ class Model_Text_Classification:
                 "train_loss": trainer.state.log_history[0]["train_loss"],
                 "eval_accuracy" : trainer.state.log_history[1]["eval_accuracy"],
                 "eval_loss": trainer.state.log_history[1]["eval_loss"],
-                "eval_f1_score": trainer.state.log_history[1]["eval_f1_score"]
+                "eval_f1_score": trainer.state.log_history[1]["eval_f1_score"],
+                "model_path": model_path
             }
             
 # if __name__ == "__main__":
